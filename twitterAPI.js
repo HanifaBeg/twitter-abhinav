@@ -12,27 +12,29 @@ exports.getTweetsForUser = (userName, options = { count: 10 }) => {
         if (!userName)
             reject_getTweetsForUser(ResponseErrors.BadRequest("User name is required."))
         if (typeof userName != "string")
-            reject_getTweetsForUser(ResponseErrors.BadRequest("User name should be of type string. Got " + typeof userName))
-
-        const days = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN']
-        const tweetCount = new Array(7).fill(0);
+            reject_getTweetsForUser(ResponseErrors.BadRequest("User name should be of type string. Got " + typeof userName));
 
         client.get('statuses/user_timeline', {
             screen_name: userName,
             ...options
         }, function (error, tweetsFetched) {
-            if (error) reject_getTweetsForUser({ err: error })
-            var NewTweets = [];
-            NewTweets = tweetsFetched.map(fetchedTweet => {
-                let tweetDay = days.indexOf(fetchedTweet.created_at.slice(0, 3).toUpperCase())
-                tweetCount[tweetDay]++;
-                return fetchedTweet.text
-            })
+            if (error) reject_getTweetsForUser({ err: error });
 
-            const lastTweetID = tweetsFetched[tweetsFetched.length - 1].id
+            const days = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN']
+            const tweetCount = new Array(7).fill(0);
+            const newTweetText = []
+
+            if (tweetsFetched.length)
+                newTweetText = tweetsFetched.map(fetchedTweet => {
+                    let tweetDay = days.indexOf(fetchedTweet.created_at.slice(0, 3).toUpperCase())
+                    tweetCount[tweetDay]++;
+                    return fetchedTweet.text
+                })
+
+            const lastTweetID = tweetsFetched[tweetsFetched.length - 1].id || null
 
             resolve_getTweetsForUser({
-                "NewTweets": NewTweets,
+                "NewTweets": newTweetText,
                 "last_d": lastTweetID,
                 "tweetCount": tweetCount
             });
