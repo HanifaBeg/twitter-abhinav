@@ -24,7 +24,7 @@ const twitter = require('./twitterAPI');
 
 router.get('/users/:id', (req, res) => {
     twitter
-        .getTweetsForUser('', { count: 20 })
+        .getTweetsForUser(req.params.id, { count: 20 /* optional params */ })
         .then(tweets => res.send(tweets))
         .catch(error => res.status(400).send(error))
 })
