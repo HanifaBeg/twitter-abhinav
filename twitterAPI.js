@@ -12,13 +12,16 @@ const client = new Twitter({
     access_token_secret: process.env.access_token_secret
 });
 
-// Get tweets by user
 /**
  * @param {string} userName - twitter handle
  * @param {object} options - overriding options 
- * @returns {Promise}
+ * @returns {Promise} Error | { NewTweets, last_d, tweetCount }
  */
-exports.getTweetsForUser = (userName, options = { count: 10 }) => {
+// Get tweets by user
+exports.getTweetsForUser = (userName, options = {}) => {
+    const defaultOptions = {
+        count: 10
+    }
     return new Promise((resolve_getTweetsForUser, reject_getTweetsForUser) => {
         // No userName provided
         if (!userName)
@@ -29,6 +32,7 @@ exports.getTweetsForUser = (userName, options = { count: 10 }) => {
         // Call to twitter API
         client.get('statuses/user_timeline', {
             screen_name: userName,
+            ...defaultOptions,
             ...options
         }, function (error, tweetsFetched) {
             // Rejection with error from twitter API
