@@ -22,7 +22,7 @@ exports.getTweetsForUser = (userName, options = { count: 10 }) => {
 
             const days = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN']
             const tweetCount = new Array(7).fill(0);
-            const newTweetText = []
+            let newTweetText = []
 
             if (tweetsFetched.length)
                 newTweetText = tweetsFetched.map(fetchedTweet => {
